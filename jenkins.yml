@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1beta2
+kind: ReplicaSet
+metadata:
+  name: jenkins-rs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-ci
+  template:
+    metadata:
+      labels:
+        app: jenkins-ci
+    spec:
+      containers:
+      - name: jenkins-ci
+        image: jenkins:2.60.3
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-svc
+  labels:
+    app: jenkins-ci
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    nodePort: 30000
+    protocol: TCP
+  selector:
+    app: jenkins-ci
